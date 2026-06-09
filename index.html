@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Canções</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&family=Lora:ital,wght@0,400;1,400&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg1:    #f3e8ff;
+      --bg2:    #fce7f3;
+      --ink:    #4c1d95;
+      --muted:  #7c3aed;
+      --card:   #ffffff;
+      --purple: #7c3aed;
+      --purple2:#6d28d9;
+      --pink:   #db2777;
+      --chorus: #fdf4ff;
+      --chorusB:#e9d5ff;
+      --sh:     rgba(76,29,149,0.12);
+    }
+
+    body {
+      min-height: 100vh;
+      background: linear-gradient(155deg, var(--bg1) 0%, var(--bg2) 100%);
+      font-family: 'Nunito', sans-serif;
+      color: var(--ink);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1.5rem 1rem 4rem;
+    }
+
+    .wrapper { width: 100%; max-width: 440px; }
+
+    /* ── Header ── */
+    header { text-align: center; margin-bottom: 1.75rem; }
+    .notes {
+      font-size: 2rem;
+      display: block;
+      margin-bottom: 0.2rem;
+      animation: bounce 1.8s ease-in-out infinite;
+    }
+    @keyframes bounce {
+      0%,100% { transform: translateY(0); }
+      50%      { transform: translateY(-6px); }
+    }
+    h1   { font-size: 1.8rem; font-weight: 900; }
+    .sub { color: var(--muted); font-size: 0.88rem; font-weight: 600; margin-top: 0.2rem; }
+
+    /* ── Form card ── */
+    .card {
+      background: var(--card);
+      border-radius: 1.25rem;
+      padding: 1.5rem;
+      box-shadow: 0 4px 16px var(--sh);
+      margin-bottom: 1rem;
+    }
+
+    .label {
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 0.7rem;
+    }
+
+    /* ── Theme grid ── */
+    .themes {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .opt-btn {
+      background: #f5f3ff;
+      border: 2px solid transparent;
+      border-radius: 0.75rem;
+      padding: 0.6rem 0.3rem 0.5rem;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Nunito', sans-serif;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .opt-btn:hover    { background: #ede9fe; }
+    .opt-btn.selected { background: #f5f3ff; border-color: var(--purple); }
+    .opt-btn:active   { transform: scale(0.95); }
+    .opt-em  { font-size: 1.5rem; display: block; line-height: 1; }
+    .opt-lbl { font-size: 0.72rem; font-weight: 800; margin-top: 0.3rem; display: block; color: var(--ink); }
+
+    /* ── Humor grid ── */
+    .humores {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .humor-btn {
+      background: #f5f3ff;
+      border: 2px solid transparent;
+      border-radius: 0.75rem;
+      padding: 0.65rem 0.5rem;
+      cursor: pointer;
+      text-align: center;
+      font-family: 'Nunito', sans-serif;
+      transition: border-color 0.15s, background 0.15s, transform 0.1s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .humor-btn:hover    { background: #ede9fe; }
+    .humor-btn.selected { background: #f5f3ff; border-color: var(--purple); }
+    .humor-btn:active   { transform: scale(0.95); }
+    .humor-em  { font-size: 1.4rem; display: block; }
+    .humor-lbl { font-size: 0.75rem; font-weight: 800; margin-top: 0.2rem; display: block; color: var(--ink); }
+    .humor-sub { font-size: 0.65rem; font-weight: 600; color: var(--muted); display: block; margin-top: 0.1rem; }
+
+    /* ── Name input ── */
+    .name-row { display: flex; gap: 0.5rem; margin-bottom: 0; }
+
+    .name-quick {
+      padding: 0.55rem 0.75rem;
+      background: #f5f3ff;
+      border: 1.5px solid #e9d5ff;
+      border-radius: 0.6rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: var(--purple);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.15s, border-color 0.15s;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .name-quick:hover    { background: #ede9fe; }
+    .name-quick.selected { background: #ede9fe; border-color: var(--purple); }
+
+    .name-input {
+      flex: 1;
+      background: #f5f3ff;
+      border: 1.5px solid #e9d5ff;
+      border-radius: 0.6rem;
+      padding: 0.55rem 0.8rem;
+      color: var(--ink);
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 700;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .name-input::placeholder { color: #c4b5fd; }
+    .name-input:focus { border-color: var(--purple); }
+
+    /* ── Generate button ── */
+    .btn-gerar {
+      width: 100%;
+      padding: 0.9rem;
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      border-radius: 0.9rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s, opacity 0.2s;
+      margin-top: 1.25rem;
+    }
+    .btn-gerar:hover:not(:disabled) { background: var(--purple2); }
+    .btn-gerar:active:not(:disabled) { transform: scale(0.98); }
+    .btn-gerar:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    /* ── Loading ── */
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 3rem 1rem;
+    }
+    .loading-icon { font-size: 2.75rem; display: inline-block; animation: bounce 1s ease-in-out infinite; }
+    .loading p { color: var(--muted); font-weight: 700; margin-top: 0.75rem; font-size: 0.9rem; }
+
+    /* ── Error ── */
+    .error-msg {
+      display: none;
+      background: rgba(220,38,38,0.08);
+      border: 1px solid rgba(220,38,38,0.25);
+      border-radius: 0.75rem;
+      padding: 0.9rem;
+      color: #b91c1c;
+      font-size: 0.875rem;
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    /* ── Song card ── */
+    .song-card {
+      display: none;
+      background: var(--card);
+      border-radius: 1.25rem;
+      box-shadow: 0 4px 20px var(--sh);
+      overflow: hidden;
+      animation: fadeUp 0.6s ease forwards;
+      margin-bottom: 1rem;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .song-header {
+      background: var(--purple);
+      padding: 1.25rem 1.5rem;
+      text-align: center;
+    }
+    .song-title {
+      font-size: 1.2rem;
+      font-weight: 900;
+      color: #fff;
+      line-height: 1.3;
+    }
+    .song-meta {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.7);
+      font-weight: 600;
+      margin-top: 0.3rem;
+    }
+
+    .song-body { padding: 1.25rem 1.5rem; }
+
+    .section-label {
+      font-size: 0.65rem;
+      font-weight: 900;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    .section-label.verso  { color: var(--muted); }
+    .section-label.refrao { color: var(--pink); }
+
+    .section-text {
+      font-family: 'Lora', serif;
+      font-size: 0.97rem;
+      line-height: 1.85;
+      white-space: pre-wrap;
+      margin-bottom: 1.1rem;
+    }
+
+    .section-block.refrao-block {
+      background: var(--chorus);
+      border-left: 3px solid var(--chorusB);
+      border-radius: 0 0.6rem 0.6rem 0;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.1rem;
+    }
+    .section-block.refrao-block .section-text {
+      margin-bottom: 0;
+      font-style: italic;
+    }
+
+    .song-footer { text-align: center; font-size: 1.2rem; padding: 0 1.5rem 1.25rem; opacity: 0.6; }
+
+    /* ── Actions ── */
+    .actions { display: none; flex-direction: column; gap: 0.6rem; }
+    .actions.show { display: flex; }
+
+    .btn-nova-cancao {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--purple);
+      color: #fff;
+      border: none;
+      border-radius: 0.9rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 900;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.1s;
+    }
+    .btn-nova-cancao:hover  { background: var(--purple2); }
+    .btn-nova-cancao:active { transform: scale(0.98); }
+
+    .btn-reset {
+      width: 100%;
+      padding: 0.75rem;
+      background: rgba(0,0,0,0.05);
+      color: var(--muted);
+      border: none;
+      border-radius: 0.9rem;
+      font-family: 'Nunito', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 800;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .btn-reset:hover { background: rgba(0,0,0,0.09); }
+
+    @media (prefers-reduced-motion: reduce) {
+      .notes, .loading-icon, .song-card { animation: none; }
+    }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+
+  <header>
+    <span class="notes">🎵</span>
+    <h1>Canções</h1>
+    <p class="sub">Escolhe o tema e o humor — a canção é vossa!</p>
+  </header>
+
+  <div id="errorMsg" class="error-msg"></div>
+
+  <div class="card" id="formCard">
+
+    <div class="label">Tema</div>
+    <div class="themes" id="temas">
+      <button class="opt-btn" data-value="animais selvagens">
+        <span class="opt-em">🐾</span><span class="opt-lbl">Animais</span>
+      </button>
+      <button class="opt-btn" data-value="espaço e planetas">
+        <span class="opt-em">🚀</span><span class="opt-lbl">Espaço</span>
+      </button>
+      <button class="opt-btn" data-value="o mar e os peixes">
+        <span class="opt-em">🌊</span><span class="opt-lbl">Mar</span>
+      </button>
+      <button class="opt-btn" data-value="super-heróis e poderes mágicos">
+        <span class="opt-em">🦸</span><span class="opt-lbl">Super-heróis</span>
+      </button>
+      <button class="opt-btn" data-value="a floresta encantada">
+        <span class="opt-em">🌲</span><span class="opt-lbl">Floresta</span>
+      </button>
+      <button class="opt-btn" data-value="dinossauros">
+        <span class="opt-em">🦕</span><span class="opt-lbl">Dinossauros</span>
+      </button>
+    </div>
+
+    <div class="label">Humor</div>
+    <div class="humores" id="humores">
+      <button class="humor-btn" data-value="alegre">
+        <span class="humor-em">😄</span>
+        <span class="humor-lbl">Alegre</span>
+        <span class="humor-sub">saltitante e feliz</span>
+      </button>
+      <button class="humor-btn" data-value="disparatada">
+        <span class="humor-em">🤪</span>
+        <span class="humor-lbl">Disparatada</span>
+        <span class="humor-sub">absurda e nonsense</span>
+      </button>
+      <button class="humor-btn" data-value="aventura">
+        <span class="humor-em">💪</span>
+        <span class="humor-lbl">Aventura</span>
+        <span class="humor-sub">épica e corajosa</span>
+      </button>
+      <button class="humor-btn" data-value="dormir">
+        <span class="humor-em">😴</span>
+        <span class="humor-lbl">Para dormir</span>
+        <span class="humor-sub">suave e sonolenta</span>
+      </button>
+    </div>
+
+    <div class="label">Nome <span style="font-weight:600;text-transform:none;letter-spacing:0;color:#c4b5fd">(opcional)</span></div>
+    <div class="name-row">
+      <button class="name-quick" id="btnAlice" onclick="quickName('Alice')">🌸 Alice</button>
+      <button class="name-quick" id="btnFrancisco" onclick="quickName('Francisco')">🚀 Francisco</button>
+      <input type="text" class="name-input" id="nomeInput" placeholder="outro nome…" maxlength="30" autocomplete="off" autocorrect="off">
+    </div>
+
+    <button class="btn-gerar" id="btnGerar" disabled>🎵 Compor Canção</button>
+  </div>
+
+  <div class="loading" id="loading">
+    <span class="loading-icon">🎵</span>
+    <p>A compor a vossa canção…</p>
+  </div>
+
+  <div class="song-card" id="songCard">
+    <div class="song-header">
+      <div class="song-title" id="songTitle"></div>
+      <div class="song-meta" id="songMeta"></div>
+    </div>
+    <div class="song-body" id="songBody"></div>
+  </div>
+
+  <div class="actions" id="actions">
+    <button class="btn-nova-cancao" id="btnNova">🎵 Nova canção com o mesmo tema</button>
+    <button class="btn-reset" onclick="resetForm()">← Escolher outro tema</button>
+  </div>
+
+</div>
+<script>
+  let tema  = null;
+  let humor = null;
+
+  const btnGerar = document.getElementById('btnGerar');
+  const formCard = document.getElementById('formCard');
+  const loading  = document.getElementById('loading');
+  const songCard = document.getElementById('songCard');
+  const actions  = document.getElementById('actions');
+  const errorMsg = document.getElementById('errorMsg');
+  const nomeInput= document.getElementById('nomeInput');
+
+  /* ── Selection ── */
+  function setupGroup(containerId, key) {
+    document.getElementById(containerId).querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.getElementById(containerId).querySelectorAll('button').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        if (key === 'tema')  tema  = btn.dataset.value;
+        if (key === 'humor') humor = btn.dataset.value;
+        checkReady();
+      });
+    });
+  }
+
+  setupGroup('temas',   'tema');
+  setupGroup('humores', 'humor');
+
+  function checkReady() {
+    btnGerar.disabled = !(tema && humor);
+  }
+
+  /* ── Quick name buttons ── */
+  function quickName(name) {
+    nomeInput.value = name;
+    document.getElementById('btnAlice').classList.toggle('selected', name === 'Alice');
+    document.getElementById('btnFrancisco').classList.toggle('selected', name === 'Francisco');
+  }
+
+  nomeInput.addEventListener('input', () => {
+    document.getElementById('btnAlice').classList.remove('selected');
+    document.getElementById('btnFrancisco').classList.remove('selected');
+  });
+
+  /* ── Generate ── */
+  btnGerar.addEventListener('click', () => generate());
+  document.getElementById('btnNova').addEventListener('click', () => generate());
+
+  async function generate() {
+    const nome = nomeInput.value.trim();
+    errorMsg.style.display = 'none';
+    formCard.style.display = 'none';
+    songCard.style.display = 'none';
+    actions.classList.remove('show');
+    loading.style.display  = 'block';
+
+    try {
+      const res  = await fetch('/api/cancao', {
+        method:  'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body:    JSON.stringify({ tema, humor, nome: nome || null })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erro desconhecido');
+
+      loading.style.display = 'none';
+      renderSong(data.cancao, nome);
+
+    } catch (err) {
+      loading.style.display  = 'none';
+      formCard.style.display = 'block';
+      errorMsg.textContent   = err.message;
+      errorMsg.style.display = 'block';
+    }
+  }
+
+  const humorLabels = {
+    alegre: '😄 Alegre', disparatada: '🤪 Disparatada',
+    aventura: '💪 Aventura', dormir: '😴 Para dormir'
+  };
+
+  function renderSong(c, nome) {
+    document.getElementById('songTitle').textContent = c.titulo;
+    document.getElementById('songMeta').textContent  =
+      (nome ? nome + ' · ' : '') + (humorLabels[humor] || humor);
+
+    const body = document.getElementById('songBody');
+    body.innerHTML = `
+      <div class="section-block">
+        <div class="section-label verso">Verso 1</div>
+        <div class="section-text">${c.verso1}</div>
+      </div>
+      <div class="section-block refrao-block">
+        <div class="section-label refrao">Refrão</div>
+        <div class="section-text">${c.refrao}</div>
+      </div>
+      <div class="section-block">
+        <div class="section-label verso">Verso 2</div>
+        <div class="section-text">${c.verso2}</div>
+      </div>
+      <div class="section-block refrao-block">
+        <div class="section-label refrao">Refrão</div>
+        <div class="section-text">${c.refrao}</div>
+      </div>
+      <div class="song-footer">🎵 🎶 🎵</div>`;
+
+    songCard.style.display = 'block';
+    actions.classList.add('show');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function resetForm() {
+    songCard.style.display = 'none';
+    actions.classList.remove('show');
+    formCard.style.display = 'block';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+</script>
+</body>
+</html>
