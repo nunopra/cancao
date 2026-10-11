@@ -23,6 +23,11 @@ export default async function handler(req, res) {
 
     const dados = await resposta.json();
 
+    // Modo de depuração: devolve a resposta crua da Suno (consultar estado custa 0 créditos)
+    if (req.query.debug === '1') {
+      return res.status(200).json({ raw: dados });
+    }
+
     if (dados.code !== 200 || !dados.data) {
       return res.status(502).json({ estado: 'ERRO', detalhe: dados });
     }
