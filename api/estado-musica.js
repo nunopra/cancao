@@ -23,27 +23,24 @@ export default async function handler(req, res) {
 
     const dados = await resposta.json();
 
-    // Modo de depuração: devolve a resposta crua da Suno (consultar estado custa 0 créditos)
-    if (req.query.debug === '1') {
-      return res.status(200).json({ raw: dados });
-    }
-
     if (dados.code !== 200 || !dados.data) {
       return res.status(502).json({ estado: 'ERRO', detalhe: dados });
     }
 
     const info = dados.data;
 
-    // Quando terminado, as faixas estão em info.response.data (a Suno devolve 2 versões)
-    const brutas = (info.response && info.response.data) ? info.response.data : [];
+    // Quando terminado, as faixas vêm em info.response.sunoData (a Suno devolve 2 versões).
+    // Aceita variações do nome do array e do campo de áudio, por robustez.
+    const resp = info.response || {};
+    const brutas = resp.sunoData || resp.data || [];
     const faixas = brutas
-      .filter(f => f.audio_url) // só as que já têm áudio
       .map(f => ({
         id: f.id,
         titulo: f.title,
-        audio: f.audio_url,
+        audio: f.audio_url || f.audioUrl || null,
         duracao: f.duration
-      }));
+      }))
+      .filter(f => f.audio); // só as que já têm áudio
 
     return res.status(200).json({
       estado: info.status, // ex.: PENDING / TEXT_SUCCESS / FIRST_SUCCESS / SUCCESS / *_FAILED
