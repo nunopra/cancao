@@ -463,6 +463,19 @@
       </button>
     </div>
 
+    <div class="label">Voz</div>
+    <div class="themes" id="vozes">
+      <button class="opt-btn selected" data-value="auto">
+        <span class="opt-em">✨</span><span class="opt-lbl">Automática</span>
+      </button>
+      <button class="opt-btn" data-value="f">
+        <span class="opt-em">👧</span><span class="opt-lbl">Feminina</span>
+      </button>
+      <button class="opt-btn" data-value="m">
+        <span class="opt-em">👦</span><span class="opt-lbl">Masculina</span>
+      </button>
+    </div>
+
     <div class="label">Nome <span style="font-weight:600;text-transform:none;letter-spacing:0;color:#c4b5fd">(opcional)</span></div>
     <div class="name-row">
       <button class="name-quick" id="btnAlice" onclick="quickName('Alice')">🌸 Alice</button>
@@ -509,6 +522,7 @@
   let humor = null;
   let idioma = 'pt';
   let genero = 'auto';
+  let voz = 'auto';
 
   const btnGerar = document.getElementById('btnGerar');
   const formCard = document.getElementById('formCard');
@@ -531,6 +545,7 @@
         if (key === 'humor') humor = btn.dataset.value;
         if (key === 'idioma') idioma = btn.dataset.value;
         if (key === 'genero') genero = btn.dataset.value;
+        if (key === 'voz')    voz    = btn.dataset.value;
         checkReady();
       });
     });
@@ -540,6 +555,7 @@
   setupGroup('humores', 'humor');
   setupGroup('idiomas', 'idioma');
   setupGroup('generos', 'genero');
+  setupGroup('vozes',   'voz');
 
   function checkReady() {
     const temBrief = extrasInput.value.trim().length > 0;
@@ -569,6 +585,7 @@
     const extras = extrasInput.value.trim();
     window.idiomaAtual = idioma;
     window.generoAtual = genero;
+    window.vozAtual = voz;
     errorMsg.style.display = 'none';
     formCard.style.display = 'none';
     songCard.style.display = 'none';
@@ -645,7 +662,7 @@
   }
 
   /* ── Música: voz + instrumental via Suno ── */
-  function estiloMusica(genero, humor, lang) {
+  function estiloMusica(genero, humor, lang, voz) {
     if (lang === 'en') {
       const tom = {
         alegre: 'cheerful and bouncy', disparatada: 'silly and playful',
@@ -655,7 +672,10 @@
         pop: 'pop', rock: 'rock', samba: 'samba', blues: 'blues', reggae: 'reggae',
         eletronica: 'electronic dance', classica: 'classical orchestral', folk: 'acoustic folk'
       }[genero] || "children's song";
-      return `${g}, ${tom}, adult vocals, sung in English`;
+      const v = voz === 'f' ? 'female adult vocals'
+              : voz === 'm' ? 'male adult vocals'
+              : 'adult vocals';
+      return `${g}, ${tom}, ${v}, sung in English`;
     } else {
       const tom = {
         alegre: 'alegre e saltitante', disparatada: 'divertida e brincalhona',
@@ -665,7 +685,10 @@
         pop: 'pop', rock: 'rock', samba: 'samba brasileiro', blues: 'blues', reggae: 'reggae',
         eletronica: 'música eletrónica dançável', classica: 'orquestral clássica', folk: 'folk acústico'
       }[genero] || 'canção infantil';
-      return `${g}, ${tom}, voz adulta, cantada em português`;
+      const v = voz === 'f' ? 'voz feminina adulta'
+              : voz === 'm' ? 'voz masculina adulta'
+              : 'voz adulta';
+      return `${g}, ${tom}, ${v}, cantada em português`;
     }
   }
 
@@ -724,8 +747,9 @@
         headers: { 'Content-Type': 'application/json' },
         body:    JSON.stringify({
           letra:  letraComTags(c),
-          estilo: estiloMusica(window.generoAtual || 'auto', humor, window.idiomaAtual || 'pt'),
-          titulo: c.titulo
+          estilo: estiloMusica(window.generoAtual || 'auto', humor, window.idiomaAtual || 'pt', window.vozAtual || 'auto'),
+          titulo: c.titulo,
+          voz:    window.vozAtual || 'auto'
         })
       });
       const dados = await r.json();

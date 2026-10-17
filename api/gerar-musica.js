@@ -15,12 +15,29 @@ export default async function handler(req, res) {
   }
 
   try {
-    const { letra, estilo, titulo } = req.body || {};
+    const { letra, estilo, titulo, voz } = req.body || {};
 
     if (!letra || !estilo || !titulo) {
       return res.status(400).json({
         erro: 'Faltam campos: "letra", "estilo" e "titulo" são obrigatórios'
       });
+    }
+
+    const corpo = {
+      customMode: true,      // usamos a nossa letra tal e qual
+      instrumental: false,   // queremos VOZ + instrumental
+      model: MODELO,
+      prompt: letra,         // em customMode + instrumental:false isto é a LETRA cantada
+      style: estilo,         // ex.: "canção infantil alegre, acústica, em português"
+      title: titulo,
+      // Não é usado — fazemos polling. Tem de ser um URL válido; qualquer um serve.
+      callBackUrl: 'https://example.com/callback'
+    };
+
+    // Género da voz: 'f' (feminina) ou 'm' (masculina). Se vier outra coisa
+    // (ex.: 'auto'), não enviamos o campo e a Suno escolhe sozinha.
+    if (voz === 'f' || voz === 'm') {
+      corpo.vocalGender = voz;
     }
 
     const resposta = await fetch('https://api.sunoapi.org/api/v1/generate', {
@@ -29,16 +46,7 @@ export default async function handler(req, res) {
         'Authorization': `Bearer ${API_KEY}`,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({
-        customMode: true,      // usamos a nossa letra tal e qual
-        instrumental: false,   // queremos VOZ + instrumental
-        model: MODELO,
-        prompt: letra,         // em customMode + instrumental:false isto é a LETRA cantada
-        style: estilo,         // ex.: "canção infantil alegre, acústica, em português"
-        title: titulo,
-        // Não é usado — fazemos polling. Tem de ser um URL válido; qualquer um serve.
-        callBackUrl: 'https://example.com/callback'
-      })
+      body: JSON.stringify(corpo)
     });
 
     const dados = await resposta.json();
